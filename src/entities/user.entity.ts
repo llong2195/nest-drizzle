@@ -51,6 +51,3 @@ export const UserEntity = pgTable(
     };
   },
 );
-
-export type SelectUser = typeof UserEntity.$inferSelect;
-export type InsertUser = typeof UserEntity.$inferInsert;

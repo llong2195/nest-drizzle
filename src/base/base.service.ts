@@ -1,21 +1,27 @@
 import { eq, inArray, Table } from 'drizzle-orm';
 import { NodePgDatabase } from 'drizzle-orm/node-postgres';
 
-import { InjectConnection } from '@/libs/drizzle/drizzle.decorator';
+import { PAGE_SIZE } from '@/configs/config';
 import { LoggerService } from '@/logger/custom.logger';
-import { PAGE_SIZE } from '../configs/config';
 import { IBaseService } from './i.base.service';
 import { PaginationResponse } from './pagination.dto';
 
-export class BaseService<Entity extends Table> implements IBaseService<Entity> {
+export class BaseService<
+  TSchema extends Record<string, unknown>,
+  Entity extends Table,
+> implements IBaseService<Entity>
+{
+  protected readonly connection: NodePgDatabase<TSchema>;
   protected readonly logger: LoggerService;
+  protected readonly entity: Entity;
 
   constructor(
-    @InjectConnection()
-    protected readonly connection: NodePgDatabase,
-    private readonly entity: Entity,
+    connection: NodePgDatabase<TSchema>,
+    entity: Entity,
     logger: LoggerService,
   ) {
+    this.connection = connection;
+    this.entity = entity;
     this.logger = logger;
   }
 
@@ -56,7 +62,7 @@ export class BaseService<Entity extends Table> implements IBaseService<Entity> {
       .execute();
   }
 
-  _store(data: Entity): Promise<Entity['$inferSelect']> {
+  _store(data: Entity['$inferInsert']): Promise<Entity['$inferSelect']> {
     return this.connection
       .insert(this.entity)
       .values(data)

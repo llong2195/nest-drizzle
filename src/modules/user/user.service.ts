@@ -2,6 +2,7 @@ import { Injectable } from '@nestjs/common';
 import { NodePgDatabase } from 'drizzle-orm/node-postgres';
 
 import { BaseService } from '@/base/base.service';
+import * as schema from '@/entities/schema';
 import { UserEntity } from '@/entities/user.entity';
 import { InjectConnection } from '@/libs/drizzle/drizzle.decorator';
 import { LoggerService } from '@/logger/custom.logger';
@@ -9,15 +10,15 @@ import { CreateUserDto } from './dto/create-user.dto';
 import { UpdateUserDto } from './dto/update-user.dto';
 
 @Injectable()
-export class UserService extends BaseService<typeof UserEntity> {
+export class UserService extends BaseService<typeof schema, typeof UserEntity> {
   constructor(
-    @InjectConnection() connection: NodePgDatabase,
+    @InjectConnection() connection: NodePgDatabase<typeof schema>,
     logger: LoggerService,
   ) {
     super(connection, UserEntity, logger);
   }
   create(createUserDto: CreateUserDto) {
-    return this._store(createUserDto as any);
+    return this._store(createUserDto);
   }
 
   findAll() {
@@ -29,10 +30,10 @@ export class UserService extends BaseService<typeof UserEntity> {
   }
 
   update(id: string, updateUserDto: UpdateUserDto) {
-    return `This action updates a #${id} user`;
+    return this._update(id, updateUserDto);
   }
 
   remove(id: string) {
-    return `This action removes a #${id} user`;
+    return this._delete(id);
   }
 }

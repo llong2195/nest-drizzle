@@ -7,7 +7,7 @@ import {
   varchar,
 } from 'drizzle-orm/pg-core';
 
-export const user_token = pgTable(
+export const UserTokenEntity = pgTable(
   'user_token',
   {
     id: uuid('id').defaultRandom().primaryKey().notNull(),

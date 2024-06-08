@@ -1,7 +1,7 @@
 import { Module } from '@nestjs/common';
 import { ConfigModule, ConfigService } from '@nestjs/config';
-import { join } from 'path';
 
+import * as schema from '@/entities/schema';
 import { DrizzleModule } from '@/libs/drizzle/drizzle.module';
 import { LoggerService } from '@/logger/custom.logger';
 import { DbCustomLogger } from '@/logger/db-custom.logger';
@@ -29,7 +29,7 @@ import { DbCustomLogger } from '@/logger/db-custom.logger';
           },
           config: {
             logger: new DbCustomLogger(new LoggerService()),
-            schema: join(__dirname, './../entities/**.entity{.ts,.js}'),
+            schema: schema,
           },
         };
       },
