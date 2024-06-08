@@ -1,0 +1,23 @@
+import 'dotenv/config';
+import { defineConfig } from 'drizzle-kit';
+
+export default defineConfig({
+  dialect: 'postgresql',
+  out: './src/database/drizzle',
+  schema: './src/entities/*.ts',
+  dbCredentials: {
+    host: process.env.DATABASE_HOST || 'localhost',
+    port: Number(process.env.DATABASE_PORT) || 5432,
+    user: process.env.DATABASE_USERNAME || 'postgres',
+    password: process.env.DATABASE_PASSWORD || 'password',
+    database: process.env.DATABASE_DB_NAME || 'example',
+    ssl: true,
+  },
+  // Print all statements
+  verbose: true,
+  // Always ask for confirmation
+  strict: true,
+  migrations: {
+    schema: 'public',
+  },
+});

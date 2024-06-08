@@ -46,7 +46,7 @@ async function bootstrap() {
   );
   // ------------- Config ---------------
   const configService = app.get(ConfigService);
-  const port: number = configService.get<number>('PORT');
+  const PORT: number = configService.get<number>('PORT');
   const LISTEN_ON: string = configService.get<string>('LISTEN_ON') || '0.0.0.0';
   const DOMAIN_WHITELIST: string[] = (
     configService.get<string>('DOMAIN_WHITELIST') || '*'
@@ -110,11 +110,11 @@ async function bootstrap() {
   // await initAdapters(app);
   // -------------------------------------------
 
-  await app.listen(port, LISTEN_ON, async () => {
+  await app.listen(PORT, LISTEN_ON, async () => {
     LoggerService.log(
       `==========================================================`,
     );
-    LoggerService.log(`Server is running on port : ${port}`, 'Server');
+    LoggerService.log(`Server is running on port : ${PORT}`, 'Server');
     LoggerService.log(
       `Application is running on : ${await app.getUrl()}`,
       'Application',
@@ -134,7 +134,6 @@ async function ConfigDocument(app: INestApplication): Promise<void> {
     .setDescription('Nestjs Drizzle')
     .setExternalDoc('Nestjs Drizzle', 'https://docs.nestjs.com')
     .setVersion('1.0')
-    .addServer('http://127.0.0.1:4000')
     .addBearerAuth({
       type: 'http',
       scheme: 'bearer',

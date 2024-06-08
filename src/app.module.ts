@@ -9,10 +9,11 @@ import { ComponentModule } from './components/component.module';
 import { DatabaseModule } from './database/database.module';
 import { EnvEnum } from './enums/app.enum';
 import { AllExceptionFilter } from './filter/exception.filter';
-import { ThrottlerBehindProxyGuard } from './guard/throttler-behind-proxy.guard';
+import { ThrottlerBehindProxyGuard } from './guards/throttler-behind-proxy.guard';
 import { LoggingInterceptor } from './interceptors/logging.interceptor';
 import { LoggerModule } from './logger/logger.module';
 import { QrCodeModule } from './modules/qr-code/qr-code.module';
+import { UserModule } from './modules/user/user.module';
 import { isEnv } from './utils/util';
 import { ValidatorsModule } from './validators/validators.module';
 
@@ -36,6 +37,7 @@ if (isEnv(EnvEnum.Production)) {
       isGlobal: true,
       envFilePath: ['.env'],
     }),
+    DatabaseModule,
 
     ThrottlerModule.forRootAsync({
       imports: [ConfigModule],
@@ -64,6 +66,7 @@ if (isEnv(EnvEnum.Production)) {
     DatabaseModule,
     ValidatorsModule,
     QrCodeModule,
+    UserModule,
   ],
   controllers: [AppController],
   providers: [
