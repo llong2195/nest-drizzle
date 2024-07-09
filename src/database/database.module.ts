@@ -24,7 +24,7 @@ import { DbCustomLogger } from '@/logger/db-custom.logger';
                 configService.get<string>('DATABASE_PASSWORD') || 'password',
               database:
                 configService.get<string>('DATABASE_DB_NAME') || 'example',
-              ssl: true,
+              ssl: false,
             },
           },
           config: {
