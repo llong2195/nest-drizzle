@@ -26,6 +26,8 @@ const logger = new Logger('DrizzleModule');
               return drizzle(client, options?.config);
             }
 
+            console.log({ config: options.pg });
+
             const pool = new Pool(options.pg.config);
             const client = drizzle(pool, options?.config);
 
@@ -33,7 +35,7 @@ const logger = new Logger('DrizzleModule');
               await client.execute(sql.raw(`select 1`));
               return client;
             } catch (error) {
-              logger.error('Unable to connect to the database', error);
+              logger.error('Unable to connect to the database', error?.stack);
               throw error;
             }
           }).pipe(
