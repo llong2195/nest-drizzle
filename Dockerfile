@@ -6,7 +6,7 @@
 
 # Want to help us make this template better? Share your feedback here: https://forms.gle/ybq9Krt8jtBL3iCk7
 
-ARG NODE_VERSION=20.15.1
+ARG NODE_VERSION=20.15.0
 ARG PNPM_VERSION=9.3.0
 
 ################################################################################
@@ -73,4 +73,4 @@ COPY --from=build /usr/src/app/. ./nest-drizzle
 EXPOSE 4404
 
 # Run the application.
-CMD pnpm start
+CMD cd ./nest-drizzle && node dist/main.js
