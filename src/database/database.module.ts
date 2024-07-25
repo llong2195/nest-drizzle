@@ -1,5 +1,8 @@
 import { Module } from '@nestjs/common';
 import { ConfigModule, ConfigService } from '@nestjs/config';
+import { sql } from 'drizzle-orm';
+import { drizzle } from 'drizzle-orm/node-postgres';
+import { Pool } from 'pg';
 
 import * as schema from '@/entities/schema';
 import { DrizzleModule } from '@/libs/drizzle/drizzle.module';
@@ -12,24 +15,23 @@ import { DbCustomLogger } from '@/logger/db-custom.logger';
       imports: [ConfigModule],
       inject: [ConfigService],
       useFactory: async (configService: ConfigService) => {
+        const pool = new Pool({
+          host: configService.get('DATABASE_HOST'),
+          user: configService.get('DATABASE_USERNAME'),
+          port: configService.get('DATABASE_PORT'),
+          password: configService.get('DATABASE_PASSWORD'),
+          database: configService.get('DATABASE_DB_NAME'),
+        });
+
         return {
-          pg: {
-            connection: 'pool',
-            config: {
-              host: configService.get<string>('DATABASE_HOST') || 'localhost',
-              port: configService.get<number>('DATABASE_PORT') || 5432,
-              user:
-                configService.get<string>('DATABASE_USERNAME') || 'postgres',
-              password:
-                configService.get<string>('DATABASE_PASSWORD') || 'password',
-              database:
-                configService.get<string>('DATABASE_DB_NAME') || 'example',
-              ssl: false,
-            },
-          },
-          config: {
-            logger: new DbCustomLogger(new LoggerService()),
-            schema: schema,
+          connection: async () => {
+            const client = drizzle(pool, {
+              logger: new DbCustomLogger(new LoggerService('DatabaseModule')),
+              schema: schema,
+            });
+
+            await client.execute(sql.raw(`select 1`));
+            return client;
           },
         };
       },

@@ -1,15 +1,6 @@
-import { DrizzleConfig } from 'drizzle-orm';
-import { ClientConfig, PoolConfig } from 'pg';
+import { NodePgDatabase } from 'drizzle-orm/node-postgres';
+import { PgWithReplicas } from 'drizzle-orm/pg-core';
 
 export interface DrizzlePGConfig {
-  pg: {
-    connection: 'client' | 'pool';
-    config?: ClientConfig | PoolConfig;
-    // Todo: implement this next version
-    replication?: {
-      primaryDb: ClientConfig | PoolConfig;
-      replicas: ClientConfig | PoolConfig[];
-    };
-  };
-  config?: DrizzleConfig<any> | undefined;
+  connection: () => Promise<NodePgDatabase | PgWithReplicas<any>>;
 }
