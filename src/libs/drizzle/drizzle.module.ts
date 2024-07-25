@@ -1,7 +1,4 @@
 import { Logger, Module } from '@nestjs/common';
-import { sql } from 'drizzle-orm';
-import { drizzle } from 'drizzle-orm/node-postgres';
-import { Client, Pool } from 'pg';
 import { catchError, defer, lastValueFrom, retry } from 'rxjs';
 
 import { DRIZZLE_CONNECTION } from './drizzle.constants';
@@ -20,20 +17,8 @@ const logger = new Logger('DrizzleModule');
       useFactory: (options: DrizzlePGConfig) => {
         return lastValueFrom(
           defer(async () => {
-            if (options.pg.connection === 'client') {
-              const client = new Client(options.pg.config);
-              await client.connect();
-              return drizzle(client, options?.config);
-            }
-
-            console.log({ config: options.pg });
-
-            const pool = new Pool(options.pg.config);
-            const client = drizzle(pool, options?.config);
-
             try {
-              await client.execute(sql.raw(`select 1`));
-              return client;
+              return await options.connection();
             } catch (error) {
               logger.error('Unable to connect to the database', error?.stack);
               throw error;
